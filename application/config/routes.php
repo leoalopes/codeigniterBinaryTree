@@ -51,8 +51,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['person'] = 'Person/new';
 $route['tree'] = 'Tree/json';
+$route['tree/unilevel'] = 'Tree/unileveljson';
 $route['tree/(:num)'] = 'Tree/json/$1';
+$route['tree/unilevel/(:num)'] = 'Tree/unileveljson/$1';
 $route['(:num)'] = 'Tree/show/$1';
+$route['unilevel'] = 'Tree/showunilevel';
+$route['unilevel/(:num)'] = 'Tree/showunilevel/$1';
 $route['default_controller'] = 'Tree/show';
 $route['404_override'] = 'Notfound';
 $route['translate_uri_dashes'] = FALSE;

@@ -12,8 +12,18 @@ class Tree extends CI_Controller {
         echo '</pre>';
     }
 
+    public function showunilevel($from = false) {
+        echo '<br><br><pre style="text-align: center">';
+        $this->tree_model->showunilevel($from);
+        echo '</pre>';
+    }
+
     public function json($from = false) {
         $this->utils->returnData($this->tree_model->json($from));
+    }
+
+    public function unileveljson($from = false) {
+        $this->utils->returnData($this->tree_model->unileveljson($from));
     }
 }
 ?>

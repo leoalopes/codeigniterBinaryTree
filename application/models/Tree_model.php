@@ -26,25 +26,79 @@ class Tree_model extends CI_Model {
         return $children;
     }
 
+    private function getUnilevelChildren($father) {
+        $children = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.father', $father['id'])->get()->result_array();
+        return $children;
+    }
+
+    public function unileveljson($from) {
+        if($from)
+            $tree = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.id', $from)->get()->row_array();
+        else
+            $tree = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.father', null)->get()->row_array();
+        $this->getUnilevelTree($tree);
+        return ['data'=>$tree, 'status'=>'HTTP/1.1 200 OK', 'code'=>200];
+    }
+
+    private function getUnilevelTree(&$node) {
+        $node['children'] = $this->getUnilevelChildren($node);
+        foreach($node['children'] as &$child) {
+            $this->getUnilevelTree($child);
+        }
+    }
+
     public function json($from) {
         if($from)
             $tree = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.id', $from)->get()->row_array();
         else
             $tree = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.father', null)->get()->row_array();
-        $this->getNext($tree);
+        $this->getTree($tree);
         return ['data'=>$tree, 'status'=>'HTTP/1.1 200 OK', 'code'=>200];
     }
 
-    public function getNext(&$node) {
+    private function getTree(&$node) {
         $children = $this->getChildren($node);
         if($children['left'] != null) {
             $node['left'] = $children['left'];
-            $this->getNext($node['left']);
+            $this->getTree($node['left']);
         }
         if($children['right'] != null) {
             $node['right'] = $children['right'];
-            $this->getNext($node['right']);
+            $this->getTree($node['right']);
         }
+    }
+
+    public function showunilevel($from) {
+        if($from)
+            $startPoint = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.id', $from)->get()->row_array();
+        else
+            $startPoint = $this->db->select('t.*, p.name')->from('tree t')->join('person p', 't.id = p.id')->where('t.father', null)->get()->row_array();
+        $this->divideByLayers($startPoint);
+    }
+
+    private function printLayer($layer) {
+        $current = $total = count($layer);
+        foreach($layer as $node) {
+            if($current < $total) echo '         ';
+            echo $node['name'];
+            $current--;
+        }
+    }
+
+    private function divideByLayers($startPoint) {
+        $nextLayer = [$startPoint];
+        do {
+            $this->printLayer($nextLayer);
+            echo '<br><br><br>-----------------<br><br><br>';
+        } while($nextLayer = $this->getNextLayer($nextLayer));
+    }
+
+    private function getNextLayer($nodes) {
+        $layer = array();
+        foreach($nodes as $node) {
+            $layer = array_merge($layer, $this->getUnilevelChildren($node));
+        }
+        return $layer != [] ? $layer : false;
     }
 
     public function show($from) {
