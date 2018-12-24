@@ -80,7 +80,7 @@ class Tree_model extends CI_Model {
         $current = $total = count($layer);
         foreach($layer as $node) {
             if($current < $total) echo '         ';
-            echo $node['name'];
+            echo $node['id'].' '.$node['name'];
             $current--;
         }
     }
