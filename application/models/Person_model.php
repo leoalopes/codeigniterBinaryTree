@@ -17,7 +17,7 @@ class Person_model extends CI_Model {
         return false;
     }
 
-    public function getPrevious($previous, $direction) {
+    private function getPrevious($previous, $direction) {
         if($previous[$direction.'_node'] == null) return $previous;
         $next = $this->db->where('id', $previous[$direction.'_node'])->get('tree')->row_array();
         return $this->getPrevious($next, $direction);
@@ -38,6 +38,21 @@ class Person_model extends CI_Model {
         $this->db->where('id', $previous['id'])->set($data['direction'].'_node', $currentId)->update('tree');
         if($err = $this->check_errors()) return $err;
         $this->db->trans_commit();
+        return ['status'=>'HTTP/1.1 204 No Content'];
+    }
+
+    public function getById($id) {
+        $person = $this->db->where('id', $id)->get('person')->row_array();
+        return ['data'=>$person, 'status'=>'HTTP/1.1 200 OK', 'code'=>200];
+    }
+
+    public function setInactive($id) {
+        $this->db->where('id', $id)->set('active', false)->update('tree');
+        return ['status'=>'HTTP/1.1 204 No Content'];
+    }
+
+    public function setActive($id) {
+        $this->db->where('id', $id)->set('active', true)->update('tree');
         return ['status'=>'HTTP/1.1 204 No Content'];
     }
 }

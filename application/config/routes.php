@@ -50,6 +50,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['person'] = 'Person/new';
+$route['person/(:num)'] = 'Person/getById/$1';
+$route['person/(:num)/active'] = 'Person/setActive/$1';
+$route['person/(:num)/inactive'] = 'Person/setInactive/$1';
 $route['tree'] = 'Tree/json';
 $route['tree/unilevel'] = 'Tree/unileveljson';
 $route['tree/(:num)'] = 'Tree/json/$1';

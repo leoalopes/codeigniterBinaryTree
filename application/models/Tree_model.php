@@ -86,11 +86,11 @@ class Tree_model extends CI_Model {
     }
 
     private function divideByLayers($startPoint) {
-        $nextLayer = [$startPoint];
+        $currentLayer = [$startPoint];
         do {
-            $this->printLayer($nextLayer);
+            $this->printLayer($currentLayer);
             echo '<br><br><br>-----------------<br><br><br>';
-        } while($nextLayer = $this->getNextLayer($nextLayer));
+        } while($currentLayer = $this->getNextLayer($currentLayer));
     }
 
     private function getNextLayer($nodes) {
@@ -113,7 +113,7 @@ class Tree_model extends CI_Model {
     }
 
     private function printNode($node) {
-        echo $node['id'].' '.$node['name'].'<br>';
+        echo $node['id'].' '.($node['active'] ? $node['name'] : 'LIVRE').'<br>';
     }
 
     private function printTree($node, $isRight, $indent) {
